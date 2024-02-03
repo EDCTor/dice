@@ -1,0 +1,67 @@
+<html>
+<head>
+    <title>Dice Simulator</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
+    <script>
+    /* once the document loads, set the history and average */
+    $(document).ready(
+        function()
+        {
+            /*
+             * generate a pseudo-random identifier for this session
+             * use this value to track the rolls, history and average for this user
+            */
+            let browserId = checkAndSetCookie();
+
+            var input = { action: 'get_history', browserId: browserId };
+            $.post(
+                "https://www.itsmetor.com/dice/dice.php",
+                input,
+                function(response)
+                {
+                    if(response != "")
+                    {
+                        updateUI("history", response);
+                    }
+                }
+            );
+
+            input = { action: 'get_average', browserId: browserId };
+            $.post(
+                "https://www.itsmetor.com/dice/dice.php",
+                input,
+                function(response)
+                {
+                    if(response != "")
+                    {
+                        updateUI("average", response);
+                    }
+                    else
+                    {
+                        console.log('Error, fetching history...');
+                    }
+                }
+            );
+        }
+    );
+    </script>
+</head>
+<body>
+    <!-- the main die tile, this updates when the button is clicked -->
+    <div id="die" class="tile appearance">
+
+    </div><br/>
+
+    <!-- the button click triggers the roll and UI updates -->
+    <button id="button">Roll</button><br/><br/>
+    <script src="dice.js"></script>
+
+    <!-- the history and average UI elements for tracking usage -->
+    <h2>History</h2>
+    <div id="history"></div><br/><br/>
+    <h2>Average</h2>
+    <div id="average"></div>
+</body>
+</html>
